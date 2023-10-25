@@ -1,0 +1,60 @@
+.cseg
+reset:  rjmp init0
+
+init0:			
+	ldi R16, low(RAMEND)    ;first things first, init stack pointer
+	out SPL, R16
+	ldi R16, high(RAMEND)
+   	out SPH, R16
+	ldi r17, $FF
+	ldi r18, $00
+
+	out DDRD, r17
+
+main:
+	out PORTD, r18
+	rcall delay1ms
+	out PORTD, r17
+	rcall delay1ms
+	rjmp main
+
+delay37us:			;since each clockcycle is taken into account to make a 37us delay,
+	NOP				;I counted the clocks of rcall and ret, and padded with NOPs :D lazy i know
+	NOP				;but it works perfectly!
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	NOP
+	ret
+
+
+delay1ms:
+	push r18
+	clr r18
+delay_loop1ms:
+	rcall delay37us
+	inc r18
+	cpi r18, 27			;1000us/37us is roughly 27
+	breq fini_1ms
+	rjmp delay_loop1ms
+fini_1ms:
+	pop r18
+	ret
